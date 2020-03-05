@@ -1,0 +1,12 @@
+ServiceNow Platform Implementation
+
+Using common resources to learn about ServiceNow
+Core system setup, including configuration management database (CMDB)
+Supported authentication options
+Application security and encryption
+Configuration best practices and design principles
+Integrations, including LDAP, Single Sign on, and Integration Hub
+Instance Management and data hygiene
+Automation with Flow Designer
+Virtual teaming
+Testing with the Automated Test Framework

@@ -1,0 +1,437 @@
+ATF Fundementals:
+
+The important elements used to develop ATF testing include"
+
+  - Test suites
+  - Tests
+  - Test Steps
+
+Test Suites:
+Test Suites group tests together that are typically peformed at the same time.
+e.g. group  the tests that are required for regression testing.
+Regression testing is defined as a type of software testing that a recent program or code change has not adversely affected existing features.
+
+Test suites represent a grouping of one or more tests or other test suites. The hierachy of child test suites can be to any level.
+The same test can be included within multiple test suites.
+
+Tests:
+
+ATF tests represent a set of actions and assertions to verify an expected end result.
+Each action or assertion within the test is represented by an individual test step.
+Tests can be peformed on the client user interface, while others are performed on the server.
+A test can include both client and server actions and assertions.
+
+Test Steps:
+
+Represents a single action or assertion within a test, such as impersonating a user.
+
+
+Assign ATF Roles
+
+Test Designer:
+Can create and run tests and test suites. Most applications developers are assigned the role.
+
+Test Adminisitrator:
+Ensure ATF System Properties are set appropriately to control how the ATF environment operates within an instance.
+Test Adminisitrators can create new Test Step configurations, once created they can be used by any ATF role.
+
+Since Test Step Configurations are created using script, Test Adminisitrators should have advanced coding experience.
+They can peform all the capabilties of a Test Designer plus being able to edit ATF system properties and create test step configurations.
+
+Web Service Tester:
+Build web service tests, role provides access to the web service modules required to facilitate test development.
+Wb service tests make use of REST integration. However, technologies like soap can be used through scripting.
+
+Web service testers can perform all the capabilities of the test designer as well as buildling web service tests.
+
+Process of Developing atf tests:
+
+1. Identify essential functionality per process/application
+2. Create tests to validate essential functions
+3. Package tests into suites
+4. Run or schedule test execution
+5. Monitor and fix issues.
+
+====
+Run ATF Tests and Test suites
+====
+
+The ATF framework is not meant to run in ServiceNow production instance environments. ATF tests and test suites should only be run in non production instances.
+
+
+===
+Enable ATF on instance
+===
+
+Automated Test Framework > Administration > Properties
+
+Enable the first two properties to display the UI Action Run test for users with the correct role.
+
+===
+Running tests and test suites
+===
+
+Tests can be run in parallel as of the New York instance, they must be run at least once manually before they can be run in parralel, as the first run stores which records are modified by the test.
+This list of modified or created records is used to prevent other tests run from modifying the same records.
+The list of records modified is regenerated after each run.
+
+
+===
+Monitor Test Runs
+===
+Automated Test Framework > Run > Waiting/Running Test Runs
+
+===
+Rollback
+===
+
+After a test is completed, the instance changes are rolled back. This includes any new records eing deleted and deleted records being restored.
+
+Excluded from rollback:
+Any records modified in the following tables are excluded from the rollback following a Test run. 
+Emails and reports are typically excluded, so their content and styling can be checked manually.
+
+History [sys_history_line]
+ECC Queue [ecc_queue]
+Email [sys_email]
+Email Log [sys_email_log]
+Report Execution [report_executions]
+Report Stats [report_stats]
+or any table extending these tables
+
+Additional tables can be excluded from the test run by adding an excludedFromRollback = true attribute to their collection record in System Definition Dictionary.
+
+Some asynchronous hanges are not always finished in time to be included within the rollback following a test run.
+This would include things like event processing, email notifications and workflow updates.
+
+===
+Run on client or server
+===
+If a Test includes Test Steps performed on the client user interface, when the Test is run ATF opens a Client Test Runner within a separate browser window to execute the actions. 
+Client Test Runners can be run across different browsers to facilitate compatibility testing.
+
+
+After tests run there may be some adjustments to the tests that failed that need to be made, if this is the case then the whole suite of tests does not need to be run again.
+
+Press Re-run failed tests, only the tests that were note included in the last will execute.
+This can save a lot of time.
+
+It is possible to compare test runs of a test suite by selecting mutiple rows and then selecting 'Compare test results' from the actions dropdown.
+
+===
+Create Tests
+===
+
+To identify the best approach to create a Test, prioritize your options:
+
+Copy a Quick Start Test delivered by ServiceNow
+Copy an existing Test created by her company
+Create the Test from scratch
+
+Creating a test from scratch
+
+write down all the steps necessary to test the feature/functionality
+make sure the scope is set correctly
+click new
+populate the fields accordingly
+add the expected outcome to the description
+
+add test steps and/or test templates.
+
+Usually the first step is to impersonate a user that has specific roles to perform the worl.
+
+Test Step configurations have a vareity of things to consider.
+The documentation helps outline each.
+
+To identify the output variables of a Test Step Configuration, she opens Automated Test Framework > Administration > Step Configurations, and then select the Test Step Configuration. Its output variables are shown in the Output Variables related list at the bottom of the Test Step Configuration form. As a Tests Designer, Alicia can view the Test Step Configuration form, but not edit it
+
+ATF Best practices
+
+Impersonate first
+Keep it short
+Consider ACL Security - Enforce Security option may need to be enabled
+Test the outcome - focus on the outcome to verify, rather than testing each point along the way.
+Format date and time consistently
+prepare for parralel testing - tests should not rely on existing data, instead the test should create the necessary data required as part of it's setup.
+
+===
+Create test suites
+===
+
+Test suites and run concurrently with other tests, but individual steps are executed sequentially.
+
+If the same test is included within a test suite hierarchy multiple times, it is only run once during Test Suite Execution.
+
+Test suites can be re run to execute only the failed tests from a previous run.
+
+Test Suites can be scheduled.
+
+Test development should not be considered complete until the test is run successfully in a new test suite with other tests.
+This is because tests that are run in isolation can fail when as part of a suite due to increased CPU utilisation, network traffic, or the server workload within a test suite.
+
+Plan Before you create
+Plan out most of the necessary test suits before creating tests.
+
+After planning the Test Suite hierarchy, the parent Test Suite is created.
+
+===
+Choose the approach
+===
+
+Tests can be added manually using the related list or dynamically using the filter.
+Using a filter can help ensure that any future tests that should fall under the test suite is added automatically
+e.g. if a test suite tests iphone catalogue items then any test that contains the word iphone could be added automatically.
+Like when a new iphone is released.
+
+When Tests are added to a Test Suite dynamically they will completely replace any Tests already assigned.
+However, additional Tests can be added manually AFTER the dynamic Tests are added.
+
+Enter an execution order for the test suite tests, by default they are run in the order they are added.
+
+Abort on failure:
+When a Test within a Test Suite fails, Test Designers can specifiy the remaining Tests should continue or if the Test Suite should abort.
+
+
+===
+Child test suites
+===
+
+Adding an existing child suite to a parent.
+1. Navigate to the test suite definition that is to be added as a child of the parent test suite.
+2. set the Parent Suite field to that of the intended parent suite.
+3. Save the form.
+4. Navigate to the Parent Suite and check the Chold Test Suites to confirm that it has been added to the form.
+
+===
+Schedule Test Suites
+===
+
+Only test suites can be scheduled. Individual Tests can only be run on-demand.
+
+Test suites within the same schedule do not run concurrently. They run sequentially, one after the other, even in the New York release.
+
+On-demand scheduled Run frequency will not perform Conditional scripts.
+
+
+===
+Prepare Client Test Runners
+===
+Scheduled Test Suites containing user interface steps can only run if an active Scheduled Client Test Runner is available using the browser and OS required.
+Scheduled test runners must already be running before scheduled Test Suites are intiated.
+ Automated Test Framework > Run > Active Scheduled Test Runners
+
+ Automated Test Framework > Run > Scheduled Client Test Runner
+ clicking on this will open a test runner that can be used the scheduled test suite, this needs to be kept open effectively all the time.
+
+ keep the separate browser window containing the Scheduled Client Test Runner active and visible to improve performance. 
+
+ ===
+ Administration
+ ===
+
+ ATF properties:
+ Test Debugging Property
+  - Mode detailed execution behavoiur written to the test Log
+  - Client Test Runner Debug Info tab showing debugging information, such as the test request message with the result JSON
+  
+  Screenshot Properties
+  - Enable or disable screenshot capture, can vary what screenshots are taken
+  - Screenshot timeout, skips screenshot cature if length of the Client Test Runner attempt exceeds this value in seconds.
+  - Screenshot hieght and width
+  - Test Runner Properties:
+   * Test runner hearbeat interval: time in seconds between Client Test Runner check ins.
+   * Test Runner Timeout: time in seconds from the last check-in of a Client Test Runner to when it will be taken offline.
+   * Offline test runner retention interval: time in seconds from the last check in of the Client Test Runner to when it will be deleted.
+
+Maintain Client Test Runner Status:
+Automated Test Framework > Administration > All Test Runners
+
+
+When running a scheduled test runner consider the following:
+
+ - Do not lock the screen on the machine used
+ - Disable the sleep function on the machine used
+ - Launch scheduled Test Runners from the Test Administrator Role.
+ - Make sure the machine used will not be powered down.
+ - Disable the screen saver on the machine used.
+ - Leave the browser zoom level set to 100% for best screenshots.
+
+ Using a virtual machine is recommended.
+
+ More information
+ https://docs.servicenow.com/bundle/newyork-application-development/page/administer/auto-test-framework/concept/atf-test-runners.html
+
+
+Maintain Testing results
+- Keep some or all of the testing results by importing them into production
+- Keep some or all of the testing results in non-production instances using data preservation to protect against overwriting when cloning
+- Let the testing results automatically delete after the default of thirty days, unless they are individually flagged to retain indefinitely
+
+import sets:
+https://docs.servicenow.com/bundle/newyork-platform-administration/page/administer/import-sets/reference/import-sets-landing-page.html
+
+Preserve Testing Results in Sub-production
+https://docs.servicenow.com/bundle/newyork-platform-administration/page/administer/managing-data/concept/data-preservation.html
+
+automatically delete testing results
+Select the retain indifinitely box on a test suite result to keep the results.
+
+Moving ATF between Instances:
+
+1. Develop ATF objects in DEV instance
+2. Migrate to TEST instance
+3. Run ATF on TEST instance
+4. Migrate to PROD instance
+5. Clone back to TEST instance
+6. Clone back to DEV instance
+7. Upgrade DEV instance
+8. Run ATF to verify upgrade of DEV instance
+
+
+ implement a consistent set of Users and Groups for reference within ATF Tests across all instances
+ Create a set of Users and Groups in the production instance that will be referenced by Tests. Using the production instance ensures the Users and Groups will be included in sub-production instances when cloning back.
+
+
+Assign the testing Users created to the same Groups as their real production User counterparts. This ensures the testing User accounts receive the same roles for proper authorization. 
+
+
+Make the testing Users and Groups inactive. This ensures real Users do not see them while working in production.
+
+
+Create an ATF Test Users Group to organize the testing Users and Groups.
+
+
+Add all the testing Users and Groups to the new ATF Test Users Group.
+
+
+Clone the production instance back to sub-production instanced to ensure the sys_ids for the testing Users and Groups remain consistent.
+
+Clone back
+ an automated post-clone script to activate the testing Users and Groups in the sub-production instances. Once active, they will be ready for use by ATF.
+
+ ===
+ Create Test templates
+ ===
+
+ Test Templates group commonly used Test Steps together for use in other tests.
+ A test designer can then take the test template and add, remove, modify and rearrange the steps accordingly.
+ Test Templates do not contain steps that have predefined values. 
+ Instead a sample test can be created with the values filled in that a desginer can then copy and modify accordingly.
+
+ Steps in Creating a Test Template:
+
+ 1. Set the application scope for the test template.
+ 2. Add a new test template Automated Test Framework > Administration > Test Templates
+ 3. Enter a descriptive name for the test template.
+ 4. Populate the test template field by first unlocking by clikcing on the lock, and then using the finder to add steps to the list.
+ 5. Add a description
+ 6. Hit Submit
+
+ 
+ ===
+ Create custom test step configurations
+ ===
+
+ This allows for the creation of test step configurations that are not provided OOB by servicenow.
+
+ They are avialable only for server side actions and assertions.
+
+ The new test step config form mostly relates to how the options is displayed and populates other fields such as description, template reminder, step environment, category and order.
+ Additionally the Batch Order contraint allows the specification of any restrictions on where the teset step configuration can be used within a test.
+
+ After the record is initialised there are two scripts that need to be developed:
+  Description Generation Script:
+    Defines a script function to genereate 'Description' text for the test step configuration. The test form displays description text for each test step based on it's configuration.
+  
+  Step Execution Script:
+    Define the behaviour of the test step configuration. By default a template is provided which can be modified accordingly.
+    View the following link for more detail:
+    https://docs.servicenow.com/bundle/newyork-application-development/page/administer/auto-test-framework/concept/atf-config-script.html
+
+  Two related lists are avialable which allow for defining the input variables and output variables.
+
+  It's a good idea to review existing step configurations to get a better idea on how to develop custom ones.
+
+  Custom test step configuration better fcilitates the re-use of "Run server side script" that may have been used as part of other test step configurations.
+  These cannot be reused normally unless they are copied.
+
+===
+Further Tips and Techiniques
+===
+Whitelist Client Errors:
+
+Known client side errors can be whitelisted which allows the test to continue with out failing so that other aspects can be tested.
+This gives other test designers or developers the time to investigate and resolve the issue.
+
+Errors that cannot be fixed or are unimportant to operations, such as finding a bug in an old library.
+Temporarily whitlist client erros while developing a test until the stage where they can be addressed arrives.
+
+List of all whitelidted client errors:
+Automated Test Framework > Run > Whitelisted Client Errors
+
+You can review a complete listing of all client errors logged across every executed Test using Automated Test Framework > Run > Reported Client Errors
+
+===
+Custom User Interface testing
+===
+
+Test for custom user interaces, such as UI pages and UI Macros.
+The following tools can assist in this:
+  - Custom UI Test Step Configurations
+  - Page Inspector
+
+servicenow doco on custom ui testing:
+https://docs.servicenow.com/bundle/newyork-application-development/page/administer/auto-test-framework/concept/custom-ui-test-steps.html
+
+===
+Page Inspector
+===
+The page inspector can help determine if HTML and JavaScript page elements are testable in ATF.
+This is achieved by using the tool to interactively analyse custom pages to identify the page components available for reference in her test steps.
+
+===
+Best Practices:
+===
+
+Avoid Test Step Repition:
+It is possible to avoid repreating the same UI test in multiple tests.
+If another teset required the functionality it can be simuated using server test steps, rather then repeating the same UI steps.
+This allows the test to run faster as well.
+
+Validate Record Updates:
+  Include a record validation step after every 'record update test step' to ensure the record was actually updated.
+
+Test functionality instead of data:
+  Do not test every permutation of a data driven features, instead if possible create tests that verify the data changes as it should.
+
+
+Use Timeouts:
+  This is useful for asyn updates on the server, such as a event processing, workflow updates, and email notifications.
+  Might require the Test Designer to incorporate and additional wait to complete.
+
+  The Wimeout field on a test step configuration can facilitate this. Thus setting the tim reuslts should be re-queried before failing.
+  15 seconds for asyn processing to complete, and up to a minute for notifications.
+  Also useful for when debugging tests, giving time to manually inspect the state of records before rolling back.
+
+Conditional Testing:
+No need for conditional logiv in ATF Tests. If there are different paths a test could go it is better to create a seperate test for each condition.
+
+
+Consider Random Selection:
+  A record can be selected at random using server script, this adds a sense of randomness which can result in detecting other issues.
+  Also it avoids issues with records being deleted when the test rolls back.
+
+Create Shorter Tests:
+  Avoid creating Tests with too many test steps if possible.
+   - When a test fails all following test steps are skipped.
+   - Shorter steps help avoid test steps being skipped.
+  Helps save time when debugging and retesting.
+
+===
+Additional Resources
+===
+Automated Test Framework Release Notes
+Automated Test Framework Known Errors
+ServiceNow Community Articles
+ServiceNow Developer Blog
+Live Coding Happy Hour Podcasts

@@ -1,0 +1,498 @@
+Flow Designer Fundementals
+==========================
+
+Flow Designer is a Now platform feature that enables rich process automation capabilities in a consolidated design environment.
+Natural language is used to confgure automation without having to write any code.
+
+Flows
+===
+
+a flow:
+ - Automates business logic for an application or process.
+ - Is an automated sequence of actions that runs each time a condition is met.
+ - Is repeatable.
+ - Performs the same predefined process every time it executes.
+
+
+Flow Designer
+===
+  An environemtn used in the platform to configure, develop and manage flows.
+
+Benefits:
+ - Has multiple capabilites so that creation, operations and troublehsooting can be done from a single interface.
+ - Natural language is used to help non-technical users understand triggers, actions, inputs and outputs, all without scripting.
+ - Reduces development cost by using a library of reusable flow componenets that are provided OOB.
+ - Reduces upgrade costs, with upgrade-safe platform logic, by replacing complex scripts.
+ - Develop, share and reuse your custom flow components with other flow designers.
+ - Expand flow designer to integrate with external instances and third party applications with a seperate subscription to IntegrationHub.
+
+Develop Flows in a Scope
+===
+ Good practice to always create flow designer content within a scoped application.
+ Helps categorise content and makes it easier to maintain and release.
+ Allows you to publish to the application repository, making it available to all other instances in your organisation.
+ Or you can publish it to the ServiceNow Store.
+
+When to use workflow:
+  - Instance is running on an earlier relase than kingston
+  - If the process requires very complex/scripted flow logic, it can be written in workflow and called from a flow.
+  - Changing logic already developed using workflow.
+  - Steps required do not exist yet in flow designer and require unsupported protocols.
+  - SLA timer required. 
+
+Access to Flow Designer
+===
+Can be achieved in two ways:
+ - Assigning a flow designer a delegated development permission.
+ - or by granting one or more Flow Designer Roles.
+
+Delegated development
+===
+This allows for access of an existing application by assigning a user a developer for that scope only.
+
+steps:
+  1. System Applications > Studio
+  2. Select the application of interest.
+  3. File > Manage Developers
+  4. Select a user's name using the Developer Name filter.
+  5. Turn on Flow Designer.
+  6. Select Save.
+
+Roles
+===
+The roles associated:
+
+flow_designer:
+  Enables a user to launch the flow designer environment to create and edit flows and subflows.
+  This role can run flows as the system user, which has access to all tables and all database operations.
+
+flow_operator:
+  Enables a user to view flow execution details, dahsboards, and logs. Grant this role to users so they can view flow results but not create, change, or test them.
+
+action_designer:
+  Enables a user to launch the Action Designer design environment to create and edit actions.
+
+Create a new Flow
+===
+  Search for flow in the app nav.
+  Flow Designer > Designer
+
+Navigating the designer
+===
+
+  Landing Page
+    includes:
+      - A landing page home link
+      - Header menu with links to lists of Flow, Subflow, Action, and Execution records. As well as a link to Flow Designer Help.
+      - A menu for creating new Flows, Subflows, and Actions.
+
+Document the process
+===
+It is important to understand what you are building.
+  - Document every step of the process to be automated.
+  - Ensure the design is though through before you develop anything.
+  - www.draw.io is a great tool for this.
+
+Anatomy of a flow
+===
+A flow consists of:
+  - Flow properties
+  - A trigger
+  - A sequence of Actions
+  - Flow logic
+  - The flow data created, collected and used by the flow.
+
+Flow Properties:
+  Document general information about it. 
+  Fields:
+    - Name
+    - Application, created when the flow is created and cannot be changed once it is saved.
+    - Description
+    - Protection: Read-only or none
+    - Run As: System User or the User who initates session.
+
+  Once these are set the flow can be built with the following:
+    - Trigger: Specifies when a flow should execute, i.e. when a condition is met.
+    - Actions: Specifies what should execute, such as field values updated or a value logged.
+    - Flow Logic: Enables flows and subflows to specify conditional or repeated actions.
+    - Flow Data: Flows store any data or generated variables in the Data pane.
+
+Flow Processing:
+  When the flow is triggered, flow processing occurs in this order:
+    - The scheduler creates an entry in the event queue to start the flow.
+    - The system processes the even and starts the flow in the background.
+    - The system builds a process plan from the flow.
+    - Using the record that triggered the flow, the system runs the process plan.
+    - The system stores the execution details in a context record.
+
+Configure the trigger:
+  Select the + icon or 'Click to add a trigger' link to get started.
+    Trigger Type:
+      - Record based flows run after a record is created, updated, or deleted. The triggering record is available as input for actions.
+      - Schedule based flows run at a scheduled time or interval. The execution time can be used as input for actions.
+      - Application-based flows have a MetricBase choice and a Service Catalog choice. They are available when the associated application is activated.
+
+    Table:
+      - The table of interest on which the actions will be performed on.
+
+    Conditions:
+      - The condition builder is to be used to define the optional criteria for when the rigger runs.
+
+    Run Trigger:
+      - Updated, Created or Updated.
+      - The options:
+        - For each unique change: Triggers the flow for every unique change, even if the flow is currently running.
+        - Once: Triggers the flow once for the life of the record.
+        - Only if not currently running: Triggers the flow for every unique change if the flow is not currently running.
+
+    Advanced Options:
+      - Interactive Session Options:
+        - Only run for non Interactive sessions - flows that have a record trigger that runs 'For each unqiue change' can produce recursions when run in a non interactive session.
+        - Only run for User Interactive Session - only triggered in interactive sessions.
+        - Run for Both Interactive and non-interactive sessions - flow is triggered in all sessions. if the trigger is set to for each unique change there is a possibility to produce recursions when run in a non interactive session.
+    
+    Best practice is to save your work often by clicking the save button, in case there is any disruption.
+
+Configure Actions
+===
+
+Core Actions
+They are an OoB provided action that cannot be edited. Categorised as Core System, Global, and Applications in their corresponding application scopes.
+  - The Core System Actions provide generic platform data handling and tasks.
+  - Content and applications scopes are called spokes.
+    A spoke is a sciped application containing Flow Designer content dedicated to a particular application or record type.
+    e.g. The ITSM spoke contains actions for managing Task records such as the Create Task action. Spokes are activated when their parent application is activated.
+
+Add an action to a flow
+  1. Click the + sign or the add an action link
+  2. Select the Action button
+  3. Select and action from the lists 
+
+Use Data Pills to configure the action
+  Data pills are created to store the variables the action generates, as well as information it may require access to.
+  This data can then be used in subsequent actions.
+
+Inline Scripts
+  Allows for a script to be inserted within the flow or action to build values. Format conversions, data transformations,
+  or math operations as examples.
+  Use iinline scripting:
+    - Enable simple data conversion or transformation without having to create custom actions or flows.
+    - Identify which input data s cript affects.
+    - Restricted access to scripting geatuers to users or groups who are knowledgeable with teh available ServiceNow APIs.
+
+    fd_data is a scripting object that can be used to access data that exists within the data panel.
+    Inline scripting requires a vlaue to be returned. The data type should be the same as the field is expecting.
+
+    Flows inline scripting documentation:
+    https://docs.servicenow.com/bundle/newyork-servicenow-platform/page/administer/flow-designer/concept/inline-scripts.html
+
+    Video series, Learn javascript on the servicenow platform.
+    https://community.servicenow.com/community?id=community_blog&sys_id=7e0838a2db6abf4423f4a345ca9619b7
+
+
+Test Flows in the Designer
+===
+  Uses/Benefits:
+    - Runtime information about a flow is available in the design environment.
+    - Open execution record to review details such as current state, actions run, and values produced. Related records can be opened in the design environment or in a new browser tab.
+    - Multiple tests can be run against the same test record, eliminating the need to create multiple test records.
+
+    Method:
+      1. With a flow open, select the Test button.
+      2. Identify a record that can be used for the test.
+      3. Select Run Test. This will simulate the trigger which in turn will execute the flow.
+      4. After the Flow process completes, select the 'Flow has been executed. To view the flow, click here link.'
+      5. The Execution Details open in a new tab in the Designer.
+
+Flow execution details:
+  ServiceNow's official product documentation on Flow Execution Details provides very detailed definitions on every element available to you on this page. 
+  https://docs.servicenow.com/bundle/newyork-servicenow-platform/page/administer/flow-designer/concept/flow-execution-details.html
+
+Add Flow Logic
+===
+  Flow logic is used to specifiy conditional or repeated actions.
+  Steps:
+    1. Select the + icon or the Click to add an Action, Flow Logic, or Subflow link to get started.
+    2. Select the Flow Logic button.
+    3. Select an option from the list. Such as if, for each, else etc.
+
+Flow Logic options
+  The following options are provided OoB:
+    - Call a Workflow: Resuse existing business logic by running a published and active workflow from a flow. Flow data can be used as workflow inputs such as specifying the current record.
+    - Do the following in parallel: Branch a flow into blocks of actions and subflows that run in parallel.
+    - Do the following until: Apply one or more actions repeatedly until an end condition is met. Flow designers can use flow data to specifiy the end conditions.
+    - End: Stop running a flow from within a conditional flow logic block. such as an If, Else If, or Else flow logic block. Use this flow logic to stop flow execution when certain conditions are met.
+    - For each: Apply one or more actions to each record in a list of records.
+    - If: Apply one or more actions when a list of conditions is met.
+    - Impersonate: Apply actions or flow logic using a different authenticated user.
+    - Make a decision: Use descision table branching logic in situations where multiple conditional paths are required, as an alternative to nested If, Else if, or Else flow logic.
+        E.g. Inputs such as location, age, crash history, car make, car model, and car year will determine a level of insurance coverage. This logic can save time and present a more readable format than nested if conditions and switch statements.
+    - Wait for a duration of time: Pause a flow for a specified time period. Flow designers must specify the duration and schedule for the wait period.
+
+
+Base System Flows
+===
+
+Provided Flows should be explored to learn best practices of flow creation.
+
+Activate a flow
+===
+Activate flows to make them avialable for execution on your instance. This preserves their current actions, inputs, and sequence as a snapshot separate from further configuration changes.
+
+Activate a Change Flow
+===
+If an activated flow is updated the Activate button turns green and is enabled again. This indicates the version of the flow on the designer page is NOT the version of the flow that executes everytime trigger conditions are met.
+Select the activate button once you have succesfully completed testing the changes and are ready to release the update.
+
+Changes are not applied to flow executions already in progress, they will continue using the version that was available when they were triggered.
+
+Active Flow executions
+===
+When a flow runs, details about the config and runtime values produced are available in the design environment.
+
+Review Execution Details:
+  1. Navigate to the Executions tab.
+  2. Select a flow execution record of interest.
+  3. Observe the execution details page opens.
+
+Both Test and Live Execution Records Available
+===
+The execution records are created everytime the flow is triggered, regardless of whether it was a test or a live execution.
+Meaning that there will be a mix of test and live records in the execution records for a given flow.
+
+Disable Flow Execution Details
+===
+It is possible to disable the production of execution details by adding the com.snc.process_flow.reporting.enabledsystem property 
+to the System Properties [sys_properties] table and set the value to false.
+
+Once disabled, execution details are NOT saved for action in the flow. However, the flow context record and related log messages are available.
+
+Deactivate a flow
+===
+A deactivated flow no longer executes, even when the trigger conditions are met.
+Flow executions already in progress will not be stopped, but no new executions will launch.
+
+Delete a flow
+===
+It is only possible to delete records in the same application scope as the current session.
+
+===
+Build a Subflow
+===
+Subflow:
+  - Sequence of reusable actions that can be started from a Flow, a Subflow, or a Script.
+  - Subflows do not require a trigger.
+  - Subflows contain inputs to make data available to actions.
+  - Actions can use the data.
+  - Data, returned via the Outputs, can be used by the module that called the Subflow.
+
+Build Flows faster with Subflows
+  By using an already developed subflow with multiple steps, intensive calculations, or complicated connection strings, a process analyst can quickly take advantage of the power of a subflow and then incorporate it within the flow they are creating.
+
+Develop Subflows in a Scope
+  Helps categorise content and makes it easier to find, maintain and release.
+  Allows you to publish it to the application repository, making it available to all other instances in your organisation,
+  or publish it to the servicenow store, making it available to everyone.
+
+Anatomy of a Subflow
+===
+  Consists of properties, one or more inputs, one or more outputs, a sequence of actions, and the data collected or created.
+
+Subfliw Input & Outputs
+  Subflows use inputs and outputs to pass data between the flow, subflow, or script that is calling it.
+
+Assign Subflow Outputs:
+  Use the Flow Logic Assign Subflow Outputs to set a value to the Outputs that will be returned to the Flow, Subflow, or Script that called the subflow.
+
+Inputs
+  Allow data to pass into the subflow. The values of the inputs can be used by the Actions, Flow Logic, and Subflows in the Actions section.
+  1. Add New Input button to create an input
+  2. Fill out the label field with a descriptive unique name.
+  3. Select the data Type the action section needs.
+  4. Use the mandatory toggle if the input is required to complete the subflow.
+
+===
+documentation
+===
+  - Document every step of the process to be automated.
+  - Ensure the design is thought through before you develop anything.
+
+  Another way of visualising the flow is with Top Down Psuedo Code. List each activity you would like to occur.
+  Use numbers to keep track of each step and decimal points for each sub-step.
+
+    e.g.
+    Start Subflow
+    Define Inputs (number, short_description)
+    Define Output (task_created_number)
+    Start Actions Section
+    Actions - Create Task
+    Actions – Create log Record
+    Action - Send Email
+    Flow Logic – Assign Subflow Output a value (3. task_created_number is 5. Create Task number)
+    End Subflow  
+
+  Check for actions that could be reused across several flows. These could perhaps be created as a subflow.
+
+Build Unique Processes
+  A unique process should be acombination of steps that creates a process that is not already available in a single action.
+
+Add Flow Logic
+  
+  - For each: Within the For Each statement, actions are processed for a list of records.
+  
+  - Do the following until: Repeatedly execute one or more actions or subflows until a condition is true.
+    A valid ending condition must be satisfied with flow data to specifiy when the flow logic stops running.
+    This may include a Lookup record action within the loop.
+  
+  - Do the following in parralel, allows actions, subflows, or both within the Do the Following in Parallel to run at the same time.
+    The subflow only continues once all parrallel paths have completed.
+    The outputs of the paths in parrallel are only available to flows and other subflows when all paths complete.
+  
+  - Make a decision: Use a decision table to execute a branch of the Make a Decision flow logic.
+    Two executino approaches:
+      * First decision that matches: Run the branch that first matches the decision answer.
+      Or
+      * Run all decisions that matches: Run all branches with a matching decision answer.
+    Also can use an otherwise branch just like an else conditional.
+
+  - Wait for a duration of time: Flows can be paused for 'Explicit duration or Relative Duration'.
+    Reasons for waiting are:
+      * Automated process may not give users time to respond.
+      * Admins may want to pause the flow/subflow to insure other instance activity completes.
+      * Specify a date and time for the subflow to complete further actions.
+
+  - Call a Workflow: Published and active workflows can be used in a flow. Leveraging these proven processes can save time.
+    Workflow inputs can be used as flow data.
+
+  - End: When used with an if, else if, or else flow logic, the entire flow can be stopped when conditions are met.
+
+  - Assign Subflow outputs: Use this to populate output values to other Flow or Subflows that called it.
+
+
+Add Subflows
+===
+
+Subflows Within Subflows:
+  - Flow designer allows flows and subflows to call a subflow in the action section. This allows you to easily add additional fundtionslaity without having to group actions and flow logic for each flow that is created.
+
+===
+Build an Action
+===
+
+Default core actions:
+  - Add Worknote Link to Context: Adds a worknote link referencing to tthe execution context.
+  - Ask For Approval: Configure approvals on any record as well as a rule set for the approval.
+  - Create or Update Record: Determine if a record already exists and update it or create a record accordingly. 
+  - Create Record: Creates a record on any table, can dynamically add and configure the fields. Server side validation rules are enforced, but UI policy does not apply.
+  - Create Task: Creates a task on any task table. Possible to block the flow until the task is complete by selecting 'Wait'.
+  - Delete Record
+  - Get Email Header: Access an email header value a data pill.
+  - Log: Log a message in the Flow Designer log table. The message field accepts text and data pills.
+  - Look Up Record: Look up a singular record on any ServiceNow table. You can configure the conditions for the record lookup.
+  - Look Up Records: Returns Multiple record on any table. Output includes a list of records and the number of records found.
+  - Send Email: Send emails to a list of email addresses, user record, and group records. Use pills to decorate the subject line and email body.
+  - Update Record: Update an existing record on a ServiceNow table. You can dynamically add and configure fields for the record.
+  - Wait For Condition: Wait for condition action causes the flow to wait until the record matches the specific condition. This can be used to block the flow indefinitely until a particular condition is met.
+
+Attachments:
+  - Copy Attachment: Copies an attachment to a target record. The source is an attachment record.
+  - Delete attachment: Delete attachment associated with record. 
+  - Get Attachments on Record: Reurns a list and count of the attachments associated with the provided source record.
+  - Lookup Attachment: Looks up an attachment and returns the Sys ID of the attachment. Json Object is also returned that has all the attachments returned with File name and File size properties.
+  - Move Attachment: Moves and attachment to a target record.
+
+Service Catalog:
+  - Create Catalog Task: Can be blocking or non-blocking. Pass catalog variables to the task to provide additional information or to allow the fulfiller to modify the variables.
+  - Get Catalog Variables: Surface Catalog Variables on the Flow and/or on a given Service Catalog Request Item.
+
+
+Custom Actions and the Action Designer
+===
+  Are a way for Admins and Action Designers to build actions that are not included in the base instance. Actions can be created with little to no code. However scripting is also available.
+
+Action Designer:
+  Interface similar to Subflow interface.
+  - There is no trigger.
+  - The action is relying onf the flow or subflow to execute it.
+  - Actions are built with Inputs, Outputs, and Steps.
+  - Creating an action step requires knowledge of application tables, fields, and business logic.
+  
+  * Inputs:
+    Variables can be created to pass data to the action steps.
+
+  * Action Step:
+    Single resusable operation within an action. Combining actions in the Steps Panel can create an unique action that can be used by flows and subflows.
+  
+  * Steps Panel:
+    Houses the inputs, outputs, and steps.
+  
+  * Outputs:
+    Data brought into or generated by the action steps can be passed back from the custom action.
+  
+  * Action configuration:
+    Configure an Action Step by completing the form fields. Data pills can be used to complete a custom action.
+
+Actions are broken down into action steps. The action steps can manipulate records, send emails, run scripts, send notifications, create logs, run REST web service requests, and Run PowerShell scripts.
+
+Guidelines:
+  - Keep them simple. If more than a few steps, consider creating a seperate action for each logical piece.
+  - Create resuable actions with simple, human readable names to hide the complexity of record lookups, record details (fields), the ServiceNow data model, and complex scripts.
+  - When actions get complex, create subflows, which allow you to string together actions into more complex reusable processes.
+
+Roles:
+  - An Admin or action_designer role is required to create custom actions.
+
+Action Properties:
+  - Name
+  - Accesible From: Which scope or scopes it will be available, either All or 'this' current scope.
+  - Application: Application scope the action will be created in. This cannot be changed after the action is created.
+  - In-Flow Annotation: Helps designers understand what the action does when used in a flow.
+  - Category: In which category will the action appear under the list of Flow Actions.
+  - Description
+
+Action Inputs & Outputs:
+  - Action Title: Name used to identify the action a flow or subflow.
+  - Action Inputs: Data variables iwth a name and data type.
+  - Steps Panel: Tracks the inputs, outputs ans steps included.
+  - Action Outputs: Provide a way to take values from the action and return them to the flow, subflow or script that called the action.
+  - Add a new step: Select the plus icon to add a step to the action.
+  - Action Input Label: the label that is displayed in the data panel.
+  - Action Input Name: the name that identifies the array in script calls.
+  - Type: the data type of the data being passed into the action.
+  - mandatory
+  - Delete
+  - Data Panel
+  - More Actions: Provides acces to:
+    * Copy Action - Copy the content of this Action.
+    * Configurations - Toggle additional featuers available to the action.
+    * Code Snippet - Access to copy and paste code snippets that can be used in other sections of the platform.
+    * Manage Security: Enable or disable the Callable by Client API option.
+  - Publish: Publishes the action. All flows using this action are updated.
+  - Save
+  - Executions: View executions linked with this action to open operations.
+  - Test: simulate inputs and execute action.
+  - Action Properties: Edit action properties e.g. category, description and protection policy.
+
+Action Steps:
+  Type of Steps that can be added:
+    - ServiceNow Data Steps: For inserting, mainuplating, and deleting data. Most actions will include one of these steps.
+    - Utilities: Can generate data in an instance. The focus is on actions that accomplish an activity  such as email, notification and log steps.
+      Scripting step allows an admin to build solutions not found in other steps.
+    - Integrations: Requires IntegrationHub plugin installed and requires a subscription.
+
+Assigning Outputs:
+  Outputs can be assinged a value, it is optional. If data needs to be returned, used the data pill picker.
+
+
+Build an Action
+===
+Documentation:
+  Before developing the following should be documented:
+  - Document every step of the process to be automated.
+  - Ensure the design is thought through before you develop anything.
+  - Suggested to use top down psuedo code https://en.wikipedia.org/wiki/Top-down_and_bottom-up_design
+
+
+
+
+  
